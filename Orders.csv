@@ -1,0 +1,6 @@
+﻿order_id,product_id,product_name,price,details,customization_options,color,Order Status,Customer Name,Order Date,Estimated Delivery Date
+1,UB021,Adidas UltraBoost 21,$180.00,Order for running shoes with custom laces.,Reflective laces,Core Black,Pending,Alice Becker,19/10/2025 10:00pm,
+2,SS002,Adidas Superstar,$90.00,Classic Superstar with gold logo.,Gold logo,White/Black,In Production,Ben Müller,17/10/2025 10:00pm,
+3,NMD001,Adidas NMD_R1,$140.00,NMD_R1 with extra cushioning.,Extra cushioning,Grey/Red,Shipped,Clara Schmidt,14/10/2025 10:00pm,
+4,ST001,Adidas Stan Smith,$100.00,Stan Smith with green heel tab.,Green heel tab,White/Green,Delivered,David Weber,9/10/2025 10:00pm,
+5,FL011,Adidas Forum Low,$130.00,Forum Low with blue accents.,Blue accents,White/Blue,Cancelled,Eva Fischer,4/10/2025 10:00pm,
