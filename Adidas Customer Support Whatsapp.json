@@ -1,0 +1,405 @@
+{
+  "name": "Adidas Customer Support Whatsapp",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "com.twilio.messaging.inbound-message.received"
+        ]
+      },
+      "type": "n8n-nodes-base.twilioTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1184,
+        704
+      ],
+      "id": "48c9bfa1-a3a7-47f7-bdfd-355c0b9e5b46",
+      "name": "Twilio Trigger",
+      "webhookId": "408fd596-bf63-441c-9e16-83ae5d33c63b",
+      "credentials": {
+        "twilioApi": {
+          "id": "NeFrtzLal3mqNpj6",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "from": "whatsapp:+14155238886",
+        "to": "whatsapp:+917003054039",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        704
+      ],
+      "id": "d2b67313-bcf2-446a-a519-73a983c4b0ec",
+      "name": "Send an SMS/MMS/WhatsApp message",
+      "credentials": {
+        "twilioApi": {
+          "id": "NeFrtzLal3mqNpj6",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=User Query: {{ $('Twilio Trigger').item.json.data.body }}",
+        "options": {
+          "systemMessage": "=You are an AI WhatsApp assistant for Adidas, a shoe store. You help customers with FAQs, order tracking, and product availability. For anything outside your scope, politely refer to the knowledge base or offer to escalate the query. You are friendly, helpful, concise, and sound like a professional human assistant.\nYou operate 24/7, but the business runs in EST timezone.\n\nConversational Flow\nOnly when asked about you, respond with:\nHey! I'm Alex, your AI assistant from Adidas. Need help with an order or have a quick question? I've got you covered—what can I assist you with today?\n\nLogic\nGeneral Questions (e.g., return policy, shipping time, store hours)\n→ Search the Knowledge Base.\n→ Always respond clearly and simply.\n→ Respond with cleaned output.\n→ Example:\nReturn Policy: {{ $json.return_policy }}\n\nFor getting product information, run tool: order_records\n\nOrder Tracking\n→ Ask for the order ID.\n→ Run tool_call: order_tracking.\n→ Reply with delivery status and expected arrival.\n→ If order ID is invalid or not found, ask the user to double-check and re-enter.\n\nSpeak to Someone / Log a Query\n→ Ask for full name, issue\n→ Confirm: \"Thanks! I've submitted this to our team. They'll get back to you shortly.\"\nSet Hassan Mahmood as default assignee always\n→ Run tool_call: create_tickets.\n\nBehavioral Guidelines\nKeep responses short, clear, and on-topic.\nSound natural and professional.\nGuide the conversation; ask polite follow-ups if vague.\nNever mention tools or internal processes.\nDon't guess answers.\nUse plain text only — no markdown formatting.\n\nGoal: Ensure customers get fast, accurate, and helpful responses, leaving them satisfied and supported."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -608,
+        704
+      ],
+      "id": "6b0e64e2-237b-4c9a-b3f2-5b4dd452a630",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -736,
+        928
+      ],
+      "id": "50891e13-bf9b-4c54-8a06-d461d95d9527",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "BppaNLDXvBvg0Zkp",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -1184,
+        368
+      ],
+      "id": "e0fad026-3efe-4983-a3f1-0900c9a50910",
+      "name": "When chat message received",
+      "webhookId": "7fa900b8-09e0-42af-ab8b-0f66b86e9dca"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appBtTrPIoWHDp0Oa",
+          "mode": "list",
+          "cachedResultName": "Adidas",
+          "cachedResultUrl": "https://airtable.com/appBtTrPIoWHDp0Oa"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblxUHS0Ap47OkT1z",
+          "mode": "list",
+          "cachedResultName": "Inventory",
+          "cachedResultUrl": "https://airtable.com/appBtTrPIoWHDp0Oa/tblxUHS0Ap47OkT1z"
+        },
+        "filterByFormula": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Filter_By_Formula', `Filter based on Price, the field name is product_price`, 'string') }}",
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.2,
+      "position": [
+        -608,
+        928
+      ],
+      "id": "6d5f70fe-01e3-4fca-a9a5-ca9e82204c64",
+      "name": "order_records",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "vVxQKB6JYDvJ1CTb",
+          "name": "Airtable account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appBtTrPIoWHDp0Oa",
+          "mode": "list",
+          "cachedResultName": "Adidas",
+          "cachedResultUrl": "https://airtable.com/appBtTrPIoWHDp0Oa"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl3dEWosT0DR4ARb",
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://airtable.com/appBtTrPIoWHDp0Oa/tbl3dEWosT0DR4ARb"
+        },
+        "filterByFormula": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Filter_By_Formula', `Filter based on order_id, the field name is order_id`, 'string') }}",
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.2,
+      "position": [
+        -480,
+        928
+      ],
+      "id": "92f2a239-5076-4f05-8827-5e0a356fe9ad",
+      "name": "order_tracking",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "vVxQKB6JYDvJ1CTb",
+          "name": "Airtable account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appBtTrPIoWHDp0Oa",
+          "mode": "list",
+          "cachedResultName": "Adidas",
+          "cachedResultUrl": "https://airtable.com/appBtTrPIoWHDp0Oa"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblT94HDozN9v2AN7",
+          "mode": "list",
+          "cachedResultName": "Tickets",
+          "cachedResultUrl": "https://airtable.com/appBtTrPIoWHDp0Oa/tblT94HDozN9v2AN7"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Name', ``, 'string') }}",
+            "Notes": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Notes', ``, 'string') }}",
+            "Assignee": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Assignee', ``, 'string') }}",
+            "Status": "Todo"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Assignee",
+              "displayName": "Assignee",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Todo",
+                  "value": "Todo"
+                },
+                {
+                  "name": "In progress",
+                  "value": "In progress"
+                },
+                {
+                  "name": "Done",
+                  "value": "Done"
+                },
+                {
+                  "name": "Status",
+                  "value": "Status"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.2,
+      "position": [
+        -352,
+        928
+      ],
+      "id": "78296004-2422-4b8c-bfbf-cefb5720eb68",
+      "name": "create_tickets",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "vVxQKB6JYDvJ1CTb",
+          "name": "Airtable account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"return_policy\": \"Return policy is 5 days\"\n}",
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "data.body",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -960,
+        704
+      ],
+      "id": "31f74388-af4d-4e2a-8dcc-16267c008fe1",
+      "name": "return"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Twilio Trigger": {
+      "main": [
+        [
+          {
+            "node": "return",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send an SMS/MMS/WhatsApp message": {
+      "main": [
+        []
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send an SMS/MMS/WhatsApp message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        []
+      ]
+    },
+    "order_records": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "order_tracking": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create_tickets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "return": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "339f6770-742a-4c99-a316-8a13707e829e",
+  "meta": {
+    "templateId": "ready-to-run-ai-workflow",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "afe61277955b6f294661d113728915ef091d24e53f1f418eec148c02dff9beec"
+  },
+  "nodeGroups": [],
+  "id": "reJ1wF3ibAJTC8ep",
+  "tags": []
+}
